@@ -14,6 +14,10 @@ end)
 
 script.on_event(defines.events.on_pre_entity_settings_pasted,
         function(event)
+            if global['requestMerger'] == nil then
+                global['requestMerger'] = {}
+            end
+
             local source = event.source
             local destination = event.destination
 
@@ -23,32 +27,36 @@ script.on_event(defines.events.on_pre_entity_settings_pasted,
 
             local sourceRequest = source.get_logistic_point(defines.logistic_member_index.logistic_container).filters
 
-            for _, value in ipairs(sourceRequest) do
-                if mergeItem(destination, value) ~= true then
-                    addItem(destination, value)
+            if sourceRequest ~= nil then
+                for _, value in ipairs(sourceRequest) do
+                    if mergeItem(destination, value) ~= true then
+                        addItem(destination, value)
+                    end
                 end
+            else
+                global['requestMerger'][event.player_index] = nil
             end
-            if global['requestMerger'] == nil then
-                global['requestMerger'] = {}
-            end
+
             global['requestMerger'][event.player_index] = destination.get_logistic_point(defines.logistic_member_index.logistic_container).filters
         end)
 
 script.on_event(defines.events.on_entity_settings_pasted,
         function(event)
-            if global['requestMerger'][event.player_index] ~= nil then
+            if event.source.get_logistic_point(defines.logistic_member_index.logistic_container).filters == nil then
+
+            elseif global['requestMerger'][event.player_index] ~= nil then
                 local requests = global['requestMerger'][event.player_index]
 
                 for _, value in ipairs(requests) do
                     event.destination.set_request_slot({ name = value.name, count = value.count}, value.index)
                 end
-
-                if global['requestMerger'] == nil then
-                    global['requestMerger'] = {}
-                end
-
-                global['requestMerger'][event.player_index] = nil
             end
+
+            if global['requestMerger'] == nil then
+                global['requestMerger'] = {}
+            end
+
+            global['requestMerger'][event.player_index] = nil
         end)
 
 function is_requestingContainer(entity)
