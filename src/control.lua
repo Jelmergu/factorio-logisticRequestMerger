@@ -42,6 +42,10 @@ script.on_event(defines.events.on_pre_entity_settings_pasted,
 
 script.on_event(defines.events.on_entity_settings_pasted,
         function(event)
+            if is_requestingContainer(event.source) == false or is_requestingContainer(event.destination) == false then
+                return
+            end
+
             if event.source.get_logistic_point(defines.logistic_member_index.logistic_container).filters == nil then
 
             elseif global['requestMerger'][event.player_index] ~= nil then
