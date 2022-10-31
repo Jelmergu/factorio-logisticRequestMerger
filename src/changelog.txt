@@ -1,4 +1,9 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.1.1
+Date: 17.02.2021
+  Bug fix:
+    - Fix that copying from an empty requester to a "filled" requester would crash. Now sets the targets request to empty
+---------------------------------------------------------------------------------------------------
 Version: 1.1.0
 Date: 12. 02. 2021
   General:
